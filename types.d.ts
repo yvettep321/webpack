@@ -3573,6 +3573,11 @@ declare interface GenerateContext {
 	 * which kind of code should be generated
 	 */
 	type: string;
+
+	/**
+	 * get access to the code generation data
+	 */
+	getData?: () => Map<string, any>;
 }
 declare class Generator {
 	constructor();
