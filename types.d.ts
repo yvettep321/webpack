@@ -626,7 +626,7 @@ declare interface CallbackWebpack<T> {
 }
 type Cell<T> = undefined | T;
 declare class Chunk {
-	constructor(name?: string);
+	constructor(name?: string, options?: ChunkOptions);
 	id: null | string | number;
 	ids: null | (string | number)[];
 	debugId: number;
@@ -646,6 +646,7 @@ declare class Chunk {
 	renderedHash?: string;
 	chunkReason?: string;
 	extraAsync: boolean;
+	options: ChunkOptions;
 	readonly entryModule?: Module;
 	hasEntryModule(): boolean;
 	addModule(module: Module): boolean;
@@ -695,6 +696,7 @@ declare class Chunk {
 		includeDirectChildren?: boolean,
 		filterFn?: (c: Chunk, chunkGraph: ChunkGraph) => boolean
 	): Record<string | number, Record<string, (string | number)[]>>;
+	static EMPTY_CHUNK_OPTIONS: ChunkOptions;
 }
 declare class ChunkGraph {
 	constructor(moduleGraph: ModuleGraph);
@@ -974,6 +976,15 @@ declare class ChunkModuleIdRangePlugin {
 declare interface ChunkModuleMaps {
 	id: Record<string | number, (string | number)[]>;
 	hash: Record<string | number, string>;
+}
+declare interface ChunkOptions {
+	initialChunkFilename?:
+		| string
+		| ((pathData: PathData, assetInfo?: AssetInfo) => string);
+	chunkFilename?:
+		| string
+		| ((pathData: PathData, assetInfo?: AssetInfo) => string);
+	chunkFormat?: string;
 }
 declare interface ChunkPathData {
 	id: string | number;
@@ -1379,7 +1390,7 @@ declare class Compilation {
 	 * This method first looks to see if a name is provided for a new chunk,
 	 * and first looks to see if any named chunks already exist and reuse that chunk instead.
 	 */
-	addChunk(name?: string): Chunk;
+	addChunk(name?: string, options?: ChunkOptions): Chunk;
 	assignDepth(module: Module): void;
 	getDependencyReferencedExports(
 		dependency: Dependency,
@@ -2683,20 +2694,60 @@ declare interface EntryData {
 	options: EntryOptions;
 }
 declare abstract class EntryDependency extends ModuleDependency {}
+type EntryDescription = EntryDescriptionOptions & EntryDescriptionExtra;
 
 /**
  * An object with entry point description.
  */
-declare interface EntryDescription {
-	/**
-	 * The method of loading chunks (methods included by default are 'jsonp' (web), 'importScripts' (WebWorker), 'require' (sync node.js), 'async-node' (async node.js), but others might be added by plugins).
-	 */
-	chunkLoading?: string | false;
-
+declare interface EntryDescriptionExtra {
 	/**
 	 * The entrypoints that the current entrypoint depend on. They must be loaded when this entrypoint is loaded.
 	 */
 	dependOn?: string | string[];
+
+	/**
+	 * Module(s) that are loaded upon startup.
+	 */
+	import: EntryItem;
+}
+type EntryDescriptionNamed = EntryDescriptionOptions &
+	EntryDescriptionNamedExtra;
+
+/**
+ * An object with entry point description.
+ */
+declare interface EntryDescriptionNamedExtra {
+	/**
+	 * Name of this entrypoint.
+	 */
+	name?: string;
+}
+
+/**
+ * An object with entry point description.
+ */
+declare interface EntryDescriptionNormalized {
+	/**
+	 * Specifies the filename template of output files of non-initial chunks on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
+	 */
+	chunkFilename?:
+		| string
+		| ((pathData: PathData, assetInfo?: AssetInfo) => string);
+
+	/**
+	 * The format of chunks (formats included by default are 'array-push' (web/WebWorker), 'commonjs' (node.js), but others might be added by plugins).
+	 */
+	chunkFormat?: string;
+
+	/**
+	 * The method of loading chunks (methods included by default are 'jsonp' (web), 'importScripts' (WebWorker), 'require' (sync node.js), 'async-node' (async node.js), but others might be added by plugins).
+	 */
+	chunkLoading?: string;
+
+	/**
+	 * The entrypoints that the current entrypoint depend on. They must be loaded when this entrypoint is loaded.
+	 */
+	dependOn?: string[];
 
 	/**
 	 * Specifies the filename of the output file on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
@@ -2704,9 +2755,16 @@ declare interface EntryDescription {
 	filename?: string | ((pathData: PathData, assetInfo?: AssetInfo) => string);
 
 	/**
-	 * Module(s) that are loaded upon startup.
+	 * Module(s) that are loaded upon startup. The last one is exported.
 	 */
-	import: EntryItem;
+	import?: string[];
+
+	/**
+	 * Specifies the filename template of output files of initial chunks on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
+	 */
+	initialChunkFilename?:
+		| string
+		| ((pathData: PathData, assetInfo?: AssetInfo) => string);
 
 	/**
 	 * Specifies the layer in which modules of this entrypoint are placed.
@@ -2737,26 +2795,35 @@ declare interface EntryDescription {
 /**
  * An object with entry point description.
  */
-declare interface EntryDescriptionNormalized {
+declare interface EntryDescriptionOptions {
+	/**
+	 * Specifies the filename template of output files of non-initial chunks on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
+	 */
+	chunkFilename?:
+		| string
+		| ((pathData: PathData, assetInfo?: AssetInfo) => string);
+
+	/**
+	 * The format of chunks (formats included by default are 'array-push' (web/WebWorker), 'commonjs' (node.js), but others might be added by plugins).
+	 */
+	chunkFormat?: string;
+
 	/**
 	 * The method of loading chunks (methods included by default are 'jsonp' (web), 'importScripts' (WebWorker), 'require' (sync node.js), 'async-node' (async node.js), but others might be added by plugins).
 	 */
-	chunkLoading?: string | false;
+	chunkLoading?: string;
 
 	/**
-	 * The entrypoints that the current entrypoint depend on. They must be loaded when this entrypoint is loaded.
-	 */
-	dependOn?: string[];
-
-	/**
-	 * Specifies the filename of output files on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
+	 * Specifies the filename of the output file on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
 	 */
 	filename?: string | ((pathData: PathData, assetInfo?: AssetInfo) => string);
 
 	/**
-	 * Module(s) that are loaded upon startup. The last one is exported.
+	 * Specifies the filename template of output files of initial chunks on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
 	 */
-	import?: string[];
+	initialChunkFilename?:
+		| string
+		| ((pathData: PathData, assetInfo?: AssetInfo) => string);
 
 	/**
 	 * Specifies the layer in which modules of this entrypoint are placed.
@@ -2811,8 +2878,11 @@ declare class EntryOptionPlugin {
 type EntryOptions = { name?: string } & Pick<
 	EntryDescriptionNormalized,
 	| "filename"
+	| "chunkFilename"
+	| "chunkFormat"
 	| "chunkLoading"
 	| "dependOn"
+	| "initialChunkFilename"
 	| "layer"
 	| "library"
 	| "runtime"
@@ -2953,6 +3023,11 @@ declare interface Experiments {
 	 * Allow module type 'asset' to generate assets.
 	 */
 	asset?: boolean;
+
+	/**
+	 * Allow to configure that async entries can be parsed.
+	 */
+	asyncEntries?: boolean;
 
 	/**
 	 * Support WebAssembly as asynchronous EcmaScript Module.
@@ -3763,7 +3838,8 @@ declare class HotModuleReplacementPlugin {
 	static getParserHooks(parser: JavascriptParser): HMRJavascriptParserHooks;
 }
 declare class HotUpdateChunk extends Chunk {
-	constructor();
+	constructor(options?: ChunkOptions);
+	static EMPTY_CHUNK_OPTIONS: ChunkOptions;
 }
 declare class HttpUriPlugin {
 	constructor();
@@ -4165,7 +4241,7 @@ declare class JavascriptParser extends Parser {
 		typeof: HookMap<SyncBailHook<[Expression], boolean | void>>;
 		importCall: SyncBailHook<[Expression], boolean | void>;
 		topLevelAwait: SyncBailHook<[Expression], boolean | void>;
-		call: HookMap<SyncBailHook<[Expression], boolean | void>>;
+		call: HookMap<SyncBailHook<[CallExpression], boolean | void>>;
 		callMemberChain: HookMap<
 			SyncBailHook<[CallExpression, string[]], boolean | void>
 		>;
@@ -4506,6 +4582,44 @@ declare class JavascriptParser extends Parser {
 }
 
 /**
+ * Options for any async entrypoint.
+ */
+declare interface JavascriptParserAsyncEntryDescription {
+	/**
+	 * Determine values based on custom logic. First argument is an context object, second and following arguments are values passed in source code. Return value is merged with the static values.
+	 */
+	byArguments?: (
+		info: { expression: Expression },
+		...args: any[]
+	) => false | JavascriptParserAsyncEntryDescription;
+
+	/**
+	 * Specify the dependency type of the request that is used for resolving.
+	 */
+	dependencyType?: string;
+
+	/**
+	 * An object with entry point description.
+	 */
+	entryOptions?: EntryDescriptionNamed;
+
+	/**
+	 * Specify the request to reference a module.
+	 */
+	request?: string;
+
+	/**
+	 * Specify the returned value (void: returns undefined, files: returns an array of filenames, urls: returns an array of URLs).
+	 */
+	return?: "files" | "void" | "urls";
+
+	/**
+	 * Any JSON value that should be returned.
+	 */
+	value?: any;
+}
+
+/**
  * Parser options for javascript modules.
  */
 declare interface JavascriptParserOptions {
@@ -4525,6 +4639,13 @@ declare interface JavascriptParserOptions {
 	 * Enable/disable parsing of CommonJs syntax.
 	 */
 	commonjs?: boolean;
+
+	/**
+	 * Disable or configure handling of async entrypoints specified in source code.
+	 */
+	entries?:
+		| false
+		| { [index: string]: false | JavascriptParserAsyncEntryDescription };
 
 	/**
 	 * Enable/disable parsing of EcmaScript Modules syntax.
@@ -6622,6 +6743,11 @@ declare interface Output {
 	devtoolNamespace?: string;
 
 	/**
+	 * List of chunk format types enabled for use by entry points.
+	 */
+	enabledChunkFormatTypes?: string[];
+
+	/**
 	 * List of chunk loading types enabled for use by entry points.
 	 */
 	enabledChunkLoadingTypes?: string[];
@@ -6880,6 +7006,11 @@ declare interface OutputNormalized {
 	 * Module namespace to use when interpolating filename template string for the sources array in a generated SourceMap. Defaults to `output.library` if not set. It's useful for avoiding runtime collisions in sourcemaps from multiple webpack projects built as libraries.
 	 */
 	devtoolNamespace?: string;
+
+	/**
+	 * List of chunk format types enabled for use by entry points.
+	 */
+	enabledChunkFormatTypes?: string[];
 
 	/**
 	 * List of chunk loading types enabled for use by entry points.

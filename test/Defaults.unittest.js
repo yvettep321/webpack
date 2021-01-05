@@ -290,6 +290,9 @@ describe("Defaults", () => {
 		    "devtoolFallbackModuleFilenameTemplate": undefined,
 		    "devtoolModuleFilenameTemplate": undefined,
 		    "devtoolNamespace": "webpack",
+		    "enabledChunkFormatTypes": Array [
+		      "array-push",
+		    ],
 		    "enabledChunkLoadingTypes": Array [
 		      "jsonp",
 		      "import-scripts",
@@ -1015,6 +1018,9 @@ describe("Defaults", () => {
 		-     "chunkLoading": "jsonp",
 		+     "chunkLoading": "require",
 		@@ ... @@
+		-       "array-push",
+		+       "commonjs",
+		@@ ... @@
 		-       "jsonp",
 		-       "import-scripts",
 		+       "require",
@@ -1149,6 +1155,9 @@ describe("Defaults", () => {
 		-     "chunkLoading": "jsonp",
 		+     "chunkLoading": "require",
 		@@ ... @@
+		-       "array-push",
+		+       "commonjs",
+		@@ ... @@
 		-       "jsonp",
 		-       "import-scripts",
 		+       "require",
@@ -1264,6 +1273,9 @@ describe("Defaults", () => {
 		@@ ... @@
 		-     "chunkLoading": "jsonp",
 		+     "chunkLoading": "require",
+		@@ ... @@
+		-       "array-push",
+		+       "commonjs",
 		@@ ... @@
 		-       "jsonp",
 		-       "import-scripts",

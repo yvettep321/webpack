@@ -56,89 +56,9 @@ export type EntryStatic = EntryObject | EntryUnnamed;
  */
 export type EntryItem = string[] | string;
 /**
- * The method of loading chunks (methods included by default are 'jsonp' (web), 'importScripts' (WebWorker), 'require' (sync node.js), 'async-node' (async node.js), but others might be added by plugins).
+ * An object with entry point description.
  */
-export type ChunkLoading = false | ChunkLoadingType;
-/**
- * The method of loading chunks (methods included by default are 'jsonp' (web), 'importScripts' (WebWorker), 'require' (sync node.js), 'async-node' (async node.js), but others might be added by plugins).
- */
-export type ChunkLoadingType =
-	| ("jsonp" | "import-scripts" | "require" | "async-node")
-	| string;
-/**
- * Specifies the filename of the output file on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
- */
-export type EntryFilename = FilenameTemplate;
-/**
- * Specifies the filename template of output files on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
- */
-export type FilenameTemplate =
-	| string
-	| ((
-			pathData: import("../lib/Compilation").PathData,
-			assetInfo?: import("../lib/Compilation").AssetInfo
-	  ) => string);
-/**
- * Specifies the layer in which modules of this entrypoint are placed.
- */
-export type Layer = null | string;
-/**
- * Add a comment in the UMD wrapper.
- */
-export type AuxiliaryComment = string | LibraryCustomUmdCommentObject;
-/**
- * Specify which export should be exposed as library.
- */
-export type LibraryExport = string[] | string;
-/**
- * The name of the library (some types allow unnamed libraries too).
- */
-export type LibraryName = string[] | string | LibraryCustomUmdObject;
-/**
- * Type of library (types included by default are 'var', 'module', 'assign', 'this', 'window', 'self', 'global', 'commonjs', 'commonjs2', 'commonjs-module', 'amd', 'amd-require', 'umd', 'umd2', 'jsonp', 'system', but others might be added by plugins).
- */
-export type LibraryType =
-	| (
-			| "var"
-			| "module"
-			| "assign"
-			| "this"
-			| "window"
-			| "self"
-			| "global"
-			| "commonjs"
-			| "commonjs2"
-			| "commonjs-module"
-			| "amd"
-			| "amd-require"
-			| "umd"
-			| "umd2"
-			| "jsonp"
-			| "system"
-	  )
-	| string;
-/**
- * If `output.libraryTarget` is set to umd and `output.library` is set, setting this to true will name the AMD module.
- */
-export type UmdNamedDefine = boolean;
-/**
- * The name of the runtime chunk. If set a runtime chunk with this name is created or an existing entrypoint is used as runtime.
- */
-export type EntryRuntime = string;
-/**
- * The name of the runtime that the entry will be associated to. Optimization for modules will be done per runtime.
- */
-export type EntryRuntimeName = string;
-/**
- * The method of loading WebAssembly Modules (methods included by default are 'fetch' (web/WebWorker), 'async-node' (node.js), but others might be added by plugins).
- */
-export type WasmLoading = false | WasmLoadingType;
-/**
- * The method of loading WebAssembly Modules (methods included by default are 'fetch' (web/WebWorker), 'async-node' (node.js), but others might be added by plugins).
- */
-export type WasmLoadingType =
-	| ("fetch-streaming" | "fetch" | "async-node")
-	| string;
+export type EntryDescription = EntryDescriptionOptions & EntryDescriptionExtra;
 /**
  * An entry point without name.
  */
@@ -394,12 +314,26 @@ export type AssetGeneratorDataUrlFunction = (
 	context: {filename: string; module: import("../lib/Module")}
 ) => string;
 /**
+ * Specifies the filename template of output files on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
+ */
+export type FilenameTemplate =
+	| string
+	| ((
+			pathData: import("../lib/Compilation").PathData,
+			assetInfo?: import("../lib/Compilation").AssetInfo
+	  ) => string);
+/**
  * Function that executes for module and should return whenever asset should be inlined as DataUrl.
  */
 export type AssetParserDataUrlFunction = (
 	source: string | Buffer,
 	context: {filename: string; module: import("../lib/Module")}
 ) => boolean;
+/**
+ * An object with entry point description.
+ */
+export type EntryDescriptionNamed = EntryDescriptionOptions &
+	EntryDescriptionNamedExtra;
 /**
  * Include polyfills or mocks for various node stuff.
  */
@@ -448,6 +382,10 @@ export type AssetModuleFilename =
 			assetInfo?: import("../lib/Compilation").AssetInfo
 	  ) => string);
 /**
+ * Add a comment in the UMD wrapper.
+ */
+export type AuxiliaryComment = string | LibraryCustomUmdCommentObject;
+/**
  * Add charset attribute for script tag.
  */
 export type Charset = boolean;
@@ -458,11 +396,25 @@ export type ChunkFilename = FilenameTemplate;
 /**
  * The format of chunks (formats included by default are 'array-push' (web/WebWorker), 'commonjs' (node.js), but others might be added by plugins).
  */
-export type ChunkFormat = ("array-push" | "commonjs" | false) | string;
+export type ChunkFormat = false | ChunkFormatType;
+/**
+ * The format of chunks (formats included by default are 'array-push' (web/WebWorker), 'commonjs' (node.js), but others might be added by plugins).
+ */
+export type ChunkFormatType = ("array-push" | "commonjs") | string;
 /**
  * Number of milliseconds before chunk request expires.
  */
 export type ChunkLoadTimeout = number;
+/**
+ * The method of loading chunks (methods included by default are 'jsonp' (web), 'importScripts' (WebWorker), 'require' (sync node.js), 'async-node' (async node.js), but others might be added by plugins).
+ */
+export type ChunkLoading = false | ChunkLoadingType;
+/**
+ * The method of loading chunks (methods included by default are 'jsonp' (web), 'importScripts' (WebWorker), 'require' (sync node.js), 'async-node' (async node.js), but others might be added by plugins).
+ */
+export type ChunkLoadingType =
+	| ("jsonp" | "import-scripts" | "require" | "async-node")
+	| string;
 /**
  * The global variable used by webpack for loading of chunks.
  */
@@ -488,13 +440,46 @@ export type DevtoolModuleFilenameTemplate = string | Function;
  */
 export type DevtoolNamespace = string;
 /**
+ * List of chunk format types enabled for use by entry points.
+ */
+export type EnabledChunkFormatTypes = ChunkFormatType[];
+/**
  * List of chunk loading types enabled for use by entry points.
  */
 export type EnabledChunkLoadingTypes = ChunkLoadingType[];
 /**
+ * Type of library (types included by default are 'var', 'module', 'assign', 'this', 'window', 'self', 'global', 'commonjs', 'commonjs2', 'commonjs-module', 'amd', 'amd-require', 'umd', 'umd2', 'jsonp', 'system', but others might be added by plugins).
+ */
+export type LibraryType =
+	| (
+			| "var"
+			| "module"
+			| "assign"
+			| "this"
+			| "window"
+			| "self"
+			| "global"
+			| "commonjs"
+			| "commonjs2"
+			| "commonjs-module"
+			| "amd"
+			| "amd-require"
+			| "umd"
+			| "umd2"
+			| "jsonp"
+			| "system"
+	  )
+	| string;
+/**
  * List of library types enabled for use by entry points.
  */
 export type EnabledLibraryTypes = LibraryType[];
+/**
+ * The method of loading WebAssembly Modules (methods included by default are 'fetch' (web/WebWorker), 'async-node' (node.js), but others might be added by plugins).
+ */
+export type WasmLoadingType =
+	| ("fetch-streaming" | "fetch" | "async-node")
+	| string;
 /**
  * List of wasm loading types enabled for use by entry points.
  */
@@ -556,6 +541,18 @@ export type InitialChunkFilename = FilenameTemplate;
  */
 export type Library = LibraryName | LibraryOptions;
 /**
+ * The name of the library (some types allow unnamed libraries too).
+ */
+export type LibraryName = string[] | string | LibraryCustomUmdObject;
+/**
+ * Specify which export should be exposed as library.
+ */
+export type LibraryExport = string[] | string;
+/**
+ * If `output.libraryTarget` is set to umd and `output.library` is set, setting this to true will name the AMD module.
+ */
+export type UmdNamedDefine = boolean;
+/**
  * Output javascript files as module source type.
  */
 export type OutputModule = boolean;
@@ -597,6 +594,10 @@ export type StrictModuleExceptionHandling = boolean;
  * A unique name of the webpack build to avoid multiple webpack runtimes to conflict when using globals.
  */
 export type UniqueName = string;
+/**
+ * The method of loading WebAssembly Modules (methods included by default are 'fetch' (web/WebWorker), 'async-node' (node.js), but others might be added by plugins).
+ */
+export type WasmLoading = false | WasmLoadingType;
 /**
  * The filename of WebAssembly modules as relative path inside the 'output.path' directory.
  */
@@ -661,6 +662,22 @@ export type Target = string[] | false | string;
  * Enter watch mode, which rebuilds on file change.
  */
 export type Watch = boolean;
+/**
+ * Specifies the filename of the output file on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
+ */
+export type EntryFilename = FilenameTemplate;
+/**
+ * Specifies the layer in which modules of this entrypoint are placed.
+ */
+export type Layer = null | string;
+/**
+ * The name of the runtime chunk. If set a runtime chunk with this name is created or an existing entrypoint is used as runtime.
+ */
+export type EntryRuntime = string;
+/**
+ * The name of the runtime that the entry will be associated to. Optimization for modules will be done per runtime.
+ */
+export type EntryRuntimeName = string;
 /**
  * A Function returning a Promise resolving to a normalized entry.
  */
@@ -925,110 +942,6 @@ export interface EntryObject {
 	[k: string]: EntryItem | EntryDescription;
 }
 /**
- * An object with entry point description.
- */
-export interface EntryDescription {
-	/**
-	 * The method of loading chunks (methods included by default are 'jsonp' (web), 'importScripts' (WebWorker), 'require' (sync node.js), 'async-node' (async node.js), but others might be added by plugins).
-	 */
-	chunkLoading?: ChunkLoading;
-	/**
-	 * The entrypoints that the current entrypoint depend on. They must be loaded when this entrypoint is loaded.
-	 */
-	dependOn?: string[] | string;
-	/**
-	 * Specifies the filename of the output file on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
-	 */
-	filename?: EntryFilename;
-	/**
-	 * Module(s) that are loaded upon startup.
-	 */
-	import: EntryItem;
-	/**
-	 * Specifies the layer in which modules of this entrypoint are placed.
-	 */
-	layer?: Layer;
-	/**
-	 * Options for library.
-	 */
-	library?: LibraryOptions;
-	/**
-	 * The name of the runtime chunk. If set a runtime chunk with this name is created or an existing entrypoint is used as runtime.
-	 */
-	runtime?: EntryRuntime;
-	/**
-	 * The name of the runtime that the entry will be associated to. Optimization for modules will be done per runtime.
-	 */
-	runtimeName?: EntryRuntimeName;
-	/**
-	 * The method of loading WebAssembly Modules (methods included by default are 'fetch' (web/WebWorker), 'async-node' (node.js), but others might be added by plugins).
-	 */
-	wasmLoading?: WasmLoading;
-}
-/**
- * Options for library.
- */
-export interface LibraryOptions {
-	/**
-	 * Add a comment in the UMD wrapper.
-	 */
-	auxiliaryComment?: AuxiliaryComment;
-	/**
-	 * Specify which export should be exposed as library.
-	 */
-	export?: LibraryExport;
-	/**
-	 * The name of the library (some types allow unnamed libraries too).
-	 */
-	name?: LibraryName;
-	/**
-	 * Type of library (types included by default are 'var', 'module', 'assign', 'this', 'window', 'self', 'global', 'commonjs', 'commonjs2', 'commonjs-module', 'amd', 'amd-require', 'umd', 'umd2', 'jsonp', 'system', but others might be added by plugins).
-	 */
-	type: LibraryType;
-	/**
-	 * If `output.libraryTarget` is set to umd and `output.library` is set, setting this to true will name the AMD module.
-	 */
-	umdNamedDefine?: UmdNamedDefine;
-}
-/**
- * Set explicit comments for `commonjs`, `commonjs2`, `amd`, and `root`.
- */
-export interface LibraryCustomUmdCommentObject {
-	/**
-	 * Set comment for `amd` section in UMD.
-	 */
-	amd?: string;
-	/**
-	 * Set comment for `commonjs` (exports) section in UMD.
-	 */
-	commonjs?: string;
-	/**
-	 * Set comment for `commonjs2` (module.exports) section in UMD.
-	 */
-	commonjs2?: string;
-	/**
-	 * Set comment for `root` (global variable) section in UMD.
-	 */
-	root?: string;
-}
-/**
- * Description object for all UMD variants of the library name.
- */
-export interface LibraryCustomUmdObject {
-	/**
-	 * Name of the exposed AMD library in the UMD.
-	 */
-	amd?: string;
-	/**
-	 * Name of the exposed commonjs export in the UMD.
-	 */
-	commonjs?: string;
-	/**
-	 * Name of the property exposed globally by a UMD library.
-	 */
-	root?: string[] | string;
-}
-/**
  * Enables/Disables experiments (experimental features with relax SemVer compatibility).
  */
 export interface Experiments {
@@ -1036,6 +949,10 @@ export interface Experiments {
 	 * Allow module type 'asset' to generate assets.
 	 */
 	asset?: boolean;
+	/**
+	 * Allow to configure that async entries can be parsed.
+	 */
+	asyncEntries?: boolean;
 	/**
 	 * Support WebAssembly as asynchronous EcmaScript Module.
 	 */
@@ -1583,6 +1500,17 @@ export interface JavascriptParserOptions {
 	 */
 	commonjs?: boolean;
 	/**
+	 * Disable or configure handling of async entrypoints specified in source code.
+	 */
+	entries?:
+		| false
+		| {
+				/**
+				 * Specify behavior of this async entrypoint.
+				 */
+				[k: string]: false | JavascriptParserAsyncEntryDescription;
+		  };
+	/**
 	 * Enable/disable parsing of EcmaScript Modules syntax.
 	 */
 	harmony?: boolean;
@@ -1623,6 +1551,38 @@ export interface JavascriptParserOptions {
 	 */
 	worker?: string[] | boolean;
 	[k: string]: any;
+}
+/**
+ * Options for any async entrypoint.
+ */
+export interface JavascriptParserAsyncEntryDescription {
+	/**
+	 * Determine values based on custom logic. First argument is an context object, second and following arguments are values passed in source code. Return value is merged with the static values.
+	 */
+	byArguments?: (
+		info: {expression: import("estree").Expression},
+		...args: any[]
+	) => false | JavascriptParserAsyncEntryDescription;
+	/**
+	 * Specify the dependency type of the request that is used for resolving.
+	 */
+	dependencyType?: string;
+	/**
+	 * An object with entry point description.
+	 */
+	entryOptions?: EntryDescriptionNamed;
+	/**
+	 * Specify the request to reference a module.
+	 */
+	request?: string;
+	/**
+	 * Specify the returned value (void: returns undefined, files: returns an array of filenames, urls: returns an array of URLs).
+	 */
+	return?: "void" | "files" | "urls";
+	/**
+	 * Any JSON value that should be returned.
+	 */
+	value?: any;
 }
 /**
  * Options object for node compatibility features.
@@ -2022,6 +1982,10 @@ export interface Output {
 	 */
 	devtoolNamespace?: DevtoolNamespace;
 	/**
+	 * List of chunk format types enabled for use by entry points.
+	 */
+	enabledChunkFormatTypes?: EnabledChunkFormatTypes;
+	/**
 	 * List of chunk loading types enabled for use by entry points.
 	 */
 	enabledChunkLoadingTypes?: EnabledChunkLoadingTypes;
@@ -2159,6 +2123,27 @@ export interface Output {
 	workerWasmLoading?: WasmLoading;
 }
 /**
+ * Set explicit comments for `commonjs`, `commonjs2`, `amd`, and `root`.
+ */
+export interface LibraryCustomUmdCommentObject {
+	/**
+	 * Set comment for `amd` section in UMD.
+	 */
+	amd?: string;
+	/**
+	 * Set comment for `commonjs` (exports) section in UMD.
+	 */
+	commonjs?: string;
+	/**
+	 * Set comment for `commonjs2` (module.exports) section in UMD.
+	 */
+	commonjs2?: string;
+	/**
+	 * Set comment for `root` (global variable) section in UMD.
+	 */
+	root?: string;
+}
+/**
  * The abilities of the environment where the webpack generated code should run.
  */
 export interface Environment {
@@ -2190,6 +2175,48 @@ export interface Environment {
 	 * The environment supports EcmaScript Module syntax to import EcmaScript modules (import ... from '...').
 	 */
 	module?: boolean;
+}
+/**
+ * Description object for all UMD variants of the library name.
+ */
+export interface LibraryCustomUmdObject {
+	/**
+	 * Name of the exposed AMD library in the UMD.
+	 */
+	amd?: string;
+	/**
+	 * Name of the exposed commonjs export in the UMD.
+	 */
+	commonjs?: string;
+	/**
+	 * Name of the property exposed globally by a UMD library.
+	 */
+	root?: string[] | string;
+}
+/**
+ * Options for library.
+ */
+export interface LibraryOptions {
+	/**
+	 * Add a comment in the UMD wrapper.
+	 */
+	auxiliaryComment?: AuxiliaryComment;
+	/**
+	 * Specify which export should be exposed as library.
+	 */
+	export?: LibraryExport;
+	/**
+	 * The name of the library (some types allow unnamed libraries too).
+	 */
+	name?: LibraryName;
+	/**
+	 * Type of library (types included by default are 'var', 'module', 'assign', 'this', 'window', 'self', 'global', 'commonjs', 'commonjs2', 'commonjs-module', 'amd', 'amd-require', 'umd', 'umd2', 'jsonp', 'system', but others might be added by plugins).
+	 */
+	type: LibraryType;
+	/**
+	 * If `output.libraryTarget` is set to umd and `output.library` is set, setting this to true will name the AMD module.
+	 */
+	umdNamedDefine?: UmdNamedDefine;
 }
 /**
  * Configuration object for web performance recommendations.
@@ -2623,21 +2650,78 @@ export interface WatchOptions {
  */
 export interface EntryDescriptionNormalized {
 	/**
+	 * Specifies the filename template of output files of non-initial chunks on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
+	 */
+	chunkFilename?: ChunkFilename;
+	/**
+	 * The format of chunks (formats included by default are 'array-push' (web/WebWorker), 'commonjs' (node.js), but others might be added by plugins).
+	 */
+	chunkFormat?: ChunkFormatType;
+	/**
 	 * The method of loading chunks (methods included by default are 'jsonp' (web), 'importScripts' (WebWorker), 'require' (sync node.js), 'async-node' (async node.js), but others might be added by plugins).
 	 */
-	chunkLoading?: ChunkLoading;
+	chunkLoading?: ChunkLoadingType;
 	/**
 	 * The entrypoints that the current entrypoint depend on. They must be loaded when this entrypoint is loaded.
 	 */
 	dependOn?: string[];
 	/**
-	 * Specifies the filename of output files on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
+	 * Specifies the filename of the output file on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
 	 */
-	filename?: Filename;
+	filename?: EntryFilename;
 	/**
 	 * Module(s) that are loaded upon startup. The last one is exported.
 	 */
 	import?: string[];
+	/**
+	 * Specifies the filename template of output files of initial chunks on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
+	 */
+	initialChunkFilename?: InitialChunkFilename;
+	/**
+	 * Specifies the layer in which modules of this entrypoint are placed.
+	 */
+	layer?: Layer;
+	/**
+	 * Options for library.
+	 */
+	library?: LibraryOptions;
+	/**
+	 * The name of the runtime chunk. If set a runtime chunk with this name is created or an existing entrypoint is used as runtime.
+	 */
+	runtime?: EntryRuntime;
+	/**
+	 * The name of the runtime that the entry will be associated to. Optimization for modules will be done per runtime.
+	 */
+	runtimeName?: EntryRuntimeName;
+	/**
+	 * The method of loading WebAssembly Modules (methods included by default are 'fetch' (web/WebWorker), 'async-node' (node.js), but others might be added by plugins).
+	 */
+	wasmLoading?: WasmLoading;
+}
+/**
+ * An object with entry point description.
+ */
+export interface EntryDescriptionOptions {
+	/**
+	 * Specifies the filename template of output files of non-initial chunks on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
+	 */
+	chunkFilename?: ChunkFilename;
+	/**
+	 * The format of chunks (formats included by default are 'array-push' (web/WebWorker), 'commonjs' (node.js), but others might be added by plugins).
+	 */
+	chunkFormat?: ChunkFormatType;
+	/**
+	 * The method of loading chunks (methods included by default are 'jsonp' (web), 'importScripts' (WebWorker), 'require' (sync node.js), 'async-node' (async node.js), but others might be added by plugins).
+	 */
+	chunkLoading?: ChunkLoadingType;
+	/**
+	 * Specifies the filename of the output file on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
+	 */
+	filename?: EntryFilename;
+	/**
+	 * Specifies the filename template of output files of initial chunks on disk. You must **not** specify an absolute path here, but the path may contain folders separated by '/'! The specified path is joined with the value of the 'output.path' option to determine the location on disk.
+	 */
+	initialChunkFilename?: InitialChunkFilename;
 	/**
 	 * Specifies the layer in which modules of this entrypoint are placed.
 	 */
@@ -2720,6 +2804,10 @@ export interface OutputNormalized {
 	 * Module namespace to use when interpolating filename template string for the sources array in a generated SourceMap. Defaults to `output.library` if not set. It's useful for avoiding runtime collisions in sourcemaps from multiple webpack projects built as libraries.
 	 */
 	devtoolNamespace?: DevtoolNamespace;
+	/**
+	 * List of chunk format types enabled for use by entry points.
+	 */
+	enabledChunkFormatTypes?: EnabledChunkFormatTypes;
 	/**
 	 * List of chunk loading types enabled for use by entry points.
 	 */
@@ -2985,4 +3073,26 @@ export interface WebpackOptionsNormalized {
 	 * Options for the watcher.
 	 */
 	watchOptions: WatchOptions;
+}
+/**
+ * An object with entry point description.
+ */
+export interface EntryDescriptionExtra {
+	/**
+	 * The entrypoints that the current entrypoint depend on. They must be loaded when this entrypoint is loaded.
+	 */
+	dependOn?: string[] | string;
+	/**
+	 * Module(s) that are loaded upon startup.
+	 */
+	import: EntryItem;
+}
+/**
+ * An object with entry point description.
+ */
+export interface EntryDescriptionNamedExtra {
+	/**
+	 * Name of this entrypoint.
+	 */
+	name?: string;
 }
