@@ -2,52 +2,74 @@
 	MIT License http://www.opensource.org/licenses/mit-license.php
 	Author Tobias Koppers @sokra
 */
-require = require("enhanced-require")(module);
+"use strict";
 
-var cp = require('child_process');
-var tc = require("./template-common");
-var formatOutput = require("../lib/formatOutput");
-var createFilenameShortener = require("../lib/createFilenameShortener");
-var webpackGraph = require("webpack-graph");
-var fs = require("fs");
+const cp = require("child_process");
+const path = require("path");
+const tc = require("./template-common");
+const fs = require("fs");
+const async = require("neo-async");
 
-var extraArgs = "";
-if(fs.existsSync(require("path").join(process.cwd(), "webpackOptions.js")))
-	extraArgs += "--options webpackOptions.js ";
+const extraArgs = "";
 
-cp.exec("node ../../bin/webpack.js --verbose --min "+extraArgs+" example.js js/output.js", function (error, stdout, stderr) {
-	if(stderr)
-		console.log(stderr);
-	if (error !== null)
-		console.log(error);
-	var readme = tc(require("raw!"+require("path").join(process.cwd(), "template.md")), require.context("raw!"+process.cwd()), stdout.replace(/[\r\n]*$/, ""), "min");
-	cp.exec("node ../../bin/webpack.js --filenames --verbose "+extraArgs+" example.js js/output.js --json", function (error, stdout, stderr) {
-		clean(require.contentCache);
-		clean(require.sourceCache);
-		clean(require.cache);
-		if(stderr)
+const targetArgs = global.NO_TARGET_ARGS ? "" : "--entry ./example.js --output-filename output.js";
+const displayReasons = global.NO_REASONS ? "" : "--stats-reasons --stats-used-exports --stats-provided-exports";
+const statsArgs = global.NO_STATS_OPTIONS ? "" : "--stats-chunks  --stats-modules-space 99999 --stats-chunk-origins";
+const publicPathArgs = global.NO_PUBLIC_PATH ? "" : '--output-public-path "dist/"';
+const commonArgs = `--no-stats-colors ${statsArgs} ${publicPathArgs} ${extraArgs} ${targetArgs}`;
+
+let readme = fs.readFileSync(require("path").join(process.cwd(), "template.md"), "utf-8");
+
+const doCompileAndReplace = (args, prefix, callback) => {
+	if (!tc.needResults(readme, prefix)) {
+		callback();
+		return;
+	}
+
+	const deleteFiles = (dir) => {
+		const targetDir = path.resolve("dist", dir);
+
+		if (path.extname(targetDir) === "") {
+			fs.readdirSync(targetDir).forEach((file) => {
+				deleteFiles(path.join(targetDir, file));
+			});
+		} else {
+			fs.unlinkSync(targetDir);
+		}
+	};
+
+	if (fs.existsSync("dist")) {
+		for (const dir of fs.readdirSync("dist")) {
+			deleteFiles(dir);
+		}
+	}
+
+	try {
+		require.resolve("webpack-cli");
+	} catch (e) {
+		throw new Error("Please install webpack-cli at root.");
+	}
+
+	cp.exec(`node ${path.resolve(__dirname, "../bin/webpack.js")} ${args} ${displayReasons} ${commonArgs}`, (error, stdout, stderr) => {
+		if (stderr)
 			console.log(stderr);
 		if (error !== null)
 			console.log(error);
-		var stats = JSON.parse(stdout);
-		var formatedStats = formatOutput(stats, {
-			context: process.cwd(),
-			verbose: true
-		});
-		var filenameShortener = createFilenameShortener(process.cwd());
-		readme = tc(readme, require.context("raw!"+process.cwd()), formatedStats.replace(/[\r\n]*$/, ""));
-		readme = readme.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-		fs.writeFile("README.md", readme, "utf-8", function() {});
-		fs.writeFile("graph.svg", webpackGraph(stats, {
-			nameShortener: filenameShortener,
-			width: 500,
-			height: 300
-		}), "utf-8", function() {});
+		try {
+			readme = tc.replaceResults(readme, process.cwd(), stdout.replace(/[\r?\n]*$/, ""), prefix);
+		} catch (e) {
+			console.log(stderr);
+			throw e;
+		}
+		callback();
 	});
-});
+};
 
-function clean(obj) {
-	for(var name in obj) {
-		delete obj[name];
-	}
-}
+async.series([
+	callback => doCompileAndReplace("--mode production --env production", "production", callback),
+	callback => doCompileAndReplace("--mode development --env development --devtool none", "development", callback),
+	callback => doCompileAndReplace("--mode none --env none --output-pathinfo verbose", "", callback)
+], () => {
+	readme = tc.replaceBase(readme);
+	fs.writeFile("README.md", readme, "utf-8", function () { });
+});

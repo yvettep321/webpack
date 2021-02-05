@@ -1,36 +1,36 @@
 # example.js
 
-``` javascript
-{{example.js}}
+```javascript
+_{{example.js}}_
 ```
 
 # file.js
 
-``` javascript
-{{file.js}}
+```javascript
+_{{file.js}}_
 ```
 
 # loader.js
 
-``` javascript
-{{loader.js}}
+```javascript
+_{{loader.js}}_
 ```
 
-# test.json
+# test.css
 
-``` javascript
-{{test.json}}
+```css
+_{{test.css}}_
 ```
 
-# js/output.js
+# dist/output.js
 
-``` javascript
-{{js/output.js}}
+```javascript
+_{{dist/output.js}}_
 ```
 
 # Console output
 
-Prints in node.js (`node example.js`) and in browser:
+Prints in node.js (`enhanced-require example.js`) and in browser:
 
 ```
 { answer: 42, foo: 'bar' }
@@ -40,8 +40,14 @@ Prints in node.js (`node example.js`) and in browser:
 
 # Info
 
-## Uncompressed
+## Unoptimized
 
 ```
-{{stdout}}
+_{{stdout}}_
+```
+
+## Production mode
+
+```
+_{{production:stdout}}_
 ```

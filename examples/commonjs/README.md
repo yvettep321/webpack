@@ -1,16 +1,23 @@
+This is a simple example that shows the usage of CommonJS.
+
+The three files `example.js`, `increment.js` and `math.js` form a dependency chain. They use `require(dependency)` to declare dependencies.
+
+You can see the output file that webpack creates by bundling them together in one file. Keep in mind that webpack add comments to make reading this file easier. These comments are removed when minimizing the file.
+
+You can also see the info messages that webpack prints to console (for both normal and minimized build).
 
 # example.js
 
-``` javascript
-var inc = require('./increment').increment;
-var a = 1;
+```javascript
+const inc = require('./increment').increment;
+const a = 1;
 inc(a); // 2
 ```
 
 # increment.js
 
-``` javascript
-var add = require('./math').add;
+```javascript
+const add = require('./math').add;
 exports.increment = function(val) {
     return add(val, 1);
 };
@@ -18,7 +25,7 @@ exports.increment = function(val) {
 
 # math.js
 
-``` javascript
+```javascript
 exports.add = function() {
     var sum = 0, i = 0, args = arguments, l = args.length;
     while (i < l) {
@@ -28,56 +35,38 @@ exports.add = function() {
 };
 ```
 
-# js/output.js
+# dist/output.js
 
-``` javascript
-/******/(function(modules) {
-/******/	var installedModules = {};
-/******/	function require(moduleId) {
-/******/		if(typeof moduleId !== "number") throw new Error("Cannot find module '"+moduleId+"'");
-/******/		if(installedModules[moduleId])
-/******/			return installedModules[moduleId].exports;
-/******/		var module = installedModules[moduleId] = {
-/******/			exports: {},
-/******/			id: moduleId,
-/******/			loaded: false
-/******/		};
-/******/		modules[moduleId](module, module.exports, require);
-/******/		module.loaded = true;
-/******/		return module.exports;
-/******/	}
-/******/	require.e = function(chunkId, callback) {
-/******/		callback(require);
-/******/	};
-/******/	require.modules = modules;
-/******/	require.cache = installedModules;
-/******/	return require(0);
-/******/})
-/******/({c:"",
-/******/0: function(module, exports, require) {
+```javascript
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ([
+/* 0 */,
+/* 1 */
+/*!**********************!*\
+  !*** ./increment.js ***!
+  \**********************/
+/*! default exports */
+/*! export increment [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_exports__ */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-/**! .\example.js !**/
-
-var inc = require(/*! ./increment */1).increment;
-var a = 1;
-inc(a); // 2
-
-/******/},
-/******/
-/******/1: function(module, exports, require) {
-
-/**! .\increment.js !**/
-
-var add = require(/*! ./math */2).add;
+const add = __webpack_require__(/*! ./math */ 2).add;
 exports.increment = function(val) {
     return add(val, 1);
 };
 
-/******/},
-/******/
-/******/2: function(module, exports, require) {
 
-/**! .\math.js !**/
+/***/ }),
+/* 2 */
+/*!*****************!*\
+  !*** ./math.js ***!
+  \*****************/
+/*! default exports */
+/*! export add [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_exports__ */
+/***/ ((__unused_webpack_module, exports) => {
 
 exports.add = function() {
     var sum = 0, i = 0, args = arguments, l = args.length;
@@ -87,52 +76,83 @@ exports.add = function() {
     return sum;
 };
 
-/******/}
-/******/})
+/***/ })
+/******/ 	]);
+```
+
+<details><summary><code>/* webpack runtime code */</code></summary>
+
+``` js
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+```
+
+</details>
+
+``` js
+(() => {
+/*!********************!*\
+  !*** ./example.js ***!
+  \********************/
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements: __webpack_require__ */
+const inc = __webpack_require__(/*! ./increment */ 1).increment;
+const a = 1;
+inc(a); // 2
+
+})();
+
+/******/ })()
+;
 ```
 
 # Info
 
-## Uncompressed
+## Unoptimized
 
 ```
-Hash: 6db0166b9d91e61d78ba00dd6df13b79
-Compile Time: 22ms
-Chunks: 1
-Modules: 3
-Modules including duplicates: 3
-Modules first chunk: 3
-main   output.js:     1414 chars/bytes
-
- <id>    <size>  <filename>
-       <reason> from <filename>
-output.js
-    0        73  .\example.js
-       main
-    1       101  .\increment.js
-       require (1x) from .\example.js
-    2       156  .\math.js
-       require (1x) from .\increment.js
+asset output.js 2.34 KiB [emitted] (name: main)
+chunk (runtime: main) output.js (main) 326 bytes [entry] [rendered]
+  > ./example.js main
+  dependent modules 254 bytes [dependent] 2 modules
+  ./example.js 72 bytes [built] [code generated]
+    [used exports unknown]
+    entry ./example.js main
+webpack 5.11.1 compiled successfully
 ```
 
-## Minimized (uglify-js, no zip)
+## Production mode
 
 ```
-Hash: 5bb0d64ae4ed4d0462683c11c6455963
-Compile Time: 170ms
-Chunks: 1
-Modules: 3
-Modules including duplicates: 3
-Modules first chunk: 3
-main   output.js:      504 chars/bytes
-
- <id>    <size>  <filename>
-       <reason> from <filename>
-output.js
-    0        40  .\example.js
-       main
-    1        70  .\increment.js
-       require (1x) from .\example.js
-    2        87  .\math.js
-       require (1x) from .\increment.js
+asset output.js 296 bytes [emitted] [minimized] (name: main)
+chunk (runtime: main) output.js (main) 326 bytes [entry] [rendered]
+  > ./example.js main
+  dependent modules 254 bytes [dependent] 2 modules
+  ./example.js 72 bytes [built] [code generated]
+    [no exports used]
+    entry ./example.js main
+webpack 5.11.1 compiled successfully
 ```

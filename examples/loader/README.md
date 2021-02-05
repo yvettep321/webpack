@@ -1,194 +1,243 @@
 # example.js
 
-``` javascript
-// Polyfill require for node.js usage of loaders
-require = require("enhanced-require")(module);
-
+```javascript
 // use our loader
 console.dir(require("./loader!./file"));
 
-// use buildin json loader
-console.dir(require("./test.json")); // default by extension
-console.dir(require("json!./test.json")); // manual
+// use built-in css loader
+console.dir(require("./test.css")); // default by extension
+console.dir(require("!css-loader!./test.css")); // manual
 ```
 
 # file.js
 
-``` javascript
+```javascript
 exports.foo = "bar";
 ```
 
 # loader.js
 
-``` javascript
+```javascript
 module.exports = function(content) {
 	return "exports.answer = 42;\n" + content;
 }
 ```
 
-# test.json
+# test.css
 
-``` javascript
-{
-	"foobar": 1234
+```css
+.some-class {
+	color: hotpink;
 }
 ```
 
-# js/output.js
+# dist/output.js
 
-``` javascript
-/******/(function(modules) {
-/******/	var installedModules = {};
-/******/	function require(moduleId) {
-/******/		if(typeof moduleId !== "number") throw new Error("Cannot find module '"+moduleId+"'");
-/******/		if(installedModules[moduleId])
-/******/			return installedModules[moduleId].exports;
-/******/		var module = installedModules[moduleId] = {
-/******/			exports: {},
-/******/			id: moduleId,
-/******/			loaded: false
-/******/		};
-/******/		modules[moduleId](module, module.exports, require);
-/******/		module.loaded = true;
-/******/		return module.exports;
-/******/	}
-/******/	require.e = function(chunkId, callback) {
-/******/		callback(require);
-/******/	};
-/******/	require.modules = modules;
-/******/	require.cache = installedModules;
-/******/	return require(0);
-/******/})
-/******/({c:"",
-/******/0: function(module, exports, require) {
-
-/**! .\example.js !**/
-
-/******/ /* WEBPACK FREE VAR INJECTION */ (function(module,console) {
-// Polyfill require for node.js usage of loaders
-require = require(/*! enhanced-require */7)(module);
-
-// use our loader
-console.dir(require(/*! ./loader!./file */6));
-
-// use buildin json loader
-console.dir(require(/*! ./test.json */2)); // default by extension
-console.dir(require(/*! json!./test.json */2)); // manual
-/******/ /* WEBPACK FREE VAR INJECTION */ }(require(/*! __webpack_module */4)(module),require(/*! __webpack_console */1)))
-
-/******/},
-/******/
-/******/1: function(module, exports, require) {
-
-/**! (webpack)\buildin\__webpack_console.js !**/
-
-var console = (function() { return this["console"] || (this["window"] && this["window"].console) || {} }());
-module.exports = console;
-for(var name in {log:1, info:1, error:1, warn:1, dir:1, trace:1, assert:1})
-	if(!console[name])
-		console[name] = function() {};
-var times = {};
-if(!console.time)
-console.time = function(label) {
-	times[label] = Date.now();
-};
-if(!console.timeEnd)
-console.timeEnd = function() {
-	var duration = Date.now() - times[label];
-	console.log('%s: %dms', label, duration);
-};
-
-/******/},
-/******/
-/******/2: function(module, exports, require) {
-
-/**! (webpack)\~\json-loader!.\test.json !**/
-
-module.exports = {
-	"foobar": 1234
-}
-
-/******/},
-/******/
-/******/3: function(module, exports, require) {
-
-/**! (webpack)\buildin\__webpack_amd_require.js !**/
-
-var req = require.valueOf();
-function amdRequire(chunk, requiresFn, fn) {
-	if(!requiresFn) {
-		// commonjs
-		return req(chunk);
-	}
-	req.e(chunk, function() {
-		var modules = requiresFn();
-		if(fn)
-			return fn.apply(null, modules);
-	});
-}
-for(var name in req)
-	amdRequire[name] = req[name];
-amdRequire.amd = require(/*! ./__webpack_options_amd.loader.js!./__webpack_options_amd.loader.js */5);
-amdRequire.config = function() {/* config is ignored, use webpack options */};
-module.exports = amdRequire;
-
-
-/******/},
-/******/
-/******/4: function(module, exports, require) {
-
-/**! (webpack)\buildin\__webpack_module.js !**/
-
-module.exports = function(module) {
-	if(!module.webpackPolyfill) {
-		module.deprecate = function() {};
-		module.paths = [];
-		// module.parent = undefined by default
-		module.children = [];
-		module.webpackPolyfill = 1;
-	}
-	return module;
-}
-
-
-/******/},
-/******/
-/******/5: function(module, exports, require) {
-
-/**! (webpack)\buildin\__webpack_options_amd.loader.js!(webpack)\buildin\__webpack_options_amd.loader.js !**/
-
-/* empty to return {} */
-
-/******/},
-/******/
-/******/6: function(module, exports, require) {
-
-/**! .\loader.js!.\file.js !**/
+```javascript
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ([
+/* 0 */,
+/* 1 */
+/*!*****************************!*\
+  !*** ./loader.js!./file.js ***!
+  \*****************************/
+/*! default exports */
+/*! export answer [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export foo [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_exports__ */
+/***/ ((__unused_webpack_module, exports) => {
 
 exports.answer = 42;
 exports.foo = "bar";
 
-/******/},
-/******/
-/******/7: function(module, exports, require) {
+/***/ }),
+/* 2 */
+/*!************************************************************!*\
+  !*** ../../node_modules/css-loader/dist/cjs.js!./test.css ***!
+  \************************************************************/
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements: __webpack_exports__, module, __webpack_require__, module.id */
+/*! CommonJS bailout: exports is used directly at 3:0-7 */
+/*! CommonJS bailout: exports.push(...) prevents optimization as exports is passed as call context at 5:0-12 */
+/*! CommonJS bailout: exports is used directly at 7:17-24 */
+/*! CommonJS bailout: module.exports is used directly at 7:0-14 */
+/***/ ((module, exports, __webpack_require__) => {
 
-/**! (webpack)\~\enhanced-require\lib\require.webpack.js !**/
+// Imports
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ 3);
+exports = ___CSS_LOADER_API_IMPORT___(false);
+// Module
+exports.push([module.id, ".some-class {\n\tcolor: hotpink;\n}\n", ""]);
+// Exports
+module.exports = exports;
+
+
+/***/ }),
+/* 3 */
+/*!*********************************************************!*\
+  !*** ../../node_modules/css-loader/dist/runtime/api.js ***!
+  \*********************************************************/
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 9:0-14 */
+/***/ ((module) => {
+
+"use strict";
+
 
 /*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
 */
-module.exports = function() {
-	return require(/*! __webpack_amd_require */3);
+// css base code, injected by the css-loader
+// eslint-disable-next-line func-names
+module.exports = function (useSourceMap) {
+  var list = []; // return the list of modules as css string
+
+  list.toString = function toString() {
+    return this.map(function (item) {
+      var content = cssWithMappingToString(item, useSourceMap);
+
+      if (item[2]) {
+        return "@media ".concat(item[2], " {").concat(content, "}");
+      }
+
+      return content;
+    }).join('');
+  }; // import a list of modules into the list
+  // eslint-disable-next-line func-names
+
+
+  list.i = function (modules, mediaQuery, dedupe) {
+    if (typeof modules === 'string') {
+      // eslint-disable-next-line no-param-reassign
+      modules = [[null, modules, '']];
+    }
+
+    var alreadyImportedModules = {};
+
+    if (dedupe) {
+      for (var i = 0; i < this.length; i++) {
+        // eslint-disable-next-line prefer-destructuring
+        var id = this[i][0];
+
+        if (id != null) {
+          alreadyImportedModules[id] = true;
+        }
+      }
+    }
+
+    for (var _i = 0; _i < modules.length; _i++) {
+      var item = [].concat(modules[_i]);
+
+      if (dedupe && alreadyImportedModules[item[0]]) {
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+
+      if (mediaQuery) {
+        if (!item[2]) {
+          item[2] = mediaQuery;
+        } else {
+          item[2] = "".concat(mediaQuery, " and ").concat(item[2]);
+        }
+      }
+
+      list.push(item);
+    }
+  };
+
+  return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+  var content = item[1] || ''; // eslint-disable-next-line prefer-destructuring
+
+  var cssMapping = item[3];
+
+  if (!cssMapping) {
+    return content;
+  }
+
+  if (useSourceMap && typeof btoa === 'function') {
+    var sourceMapping = toComment(cssMapping);
+    var sourceURLs = cssMapping.sources.map(function (source) {
+      return "/*# sourceURL=".concat(cssMapping.sourceRoot || '').concat(source, " */");
+    });
+    return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+  }
+
+  return [content].join('\n');
+} // Adapted from convert-source-map (MIT)
+
+
+function toComment(sourceMap) {
+  // eslint-disable-next-line no-undef
+  var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+  var data = "sourceMappingURL=data:application/json;charset=utf-8;base64,".concat(base64);
+  return "/*# ".concat(data, " */");
 }
 
-/******/}
-/******/})
+/***/ })
+/******/ 	]);
+```
+
+<details><summary><code>/* webpack runtime code */</code></summary>
+
+``` js
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			id: moduleId,
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+```
+
+</details>
+
+``` js
+(() => {
+/*!********************!*\
+  !*** ./example.js ***!
+  \********************/
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements: __webpack_require__ */
+// use our loader
+console.dir(__webpack_require__(/*! ./loader!./file */ 1));
+
+// use built-in css loader
+console.dir(__webpack_require__(/*! ./test.css */ 2)); // default by extension
+console.dir(__webpack_require__(/*! !css-loader!./test.css */ 2)); // manual
+
+})();
+
+/******/ })()
+;
 ```
 
 # Console output
 
-Prints in node.js (`node example.js`) and in browser:
+Prints in node.js (`enhanced-require example.js`) and in browser:
 
 ```
 { answer: 42, foo: 'bar' }
@@ -198,35 +247,28 @@ Prints in node.js (`node example.js`) and in browser:
 
 # Info
 
-## Uncompressed
+## Unoptimized
 
 ```
-Hash: ca21531724184f0e1ca4cf691ca027d1
-Compile Time: 68ms
-Chunks: 1
-Modules: 8
-Modules including duplicates: 8
-Modules first chunk: 8
-main   output.js:     3837 chars/bytes
+asset output.js 5.78 KiB [emitted] (name: main)
+chunk (runtime: main) output.js (main) 2.96 KiB [entry] [rendered]
+  > ./example.js main
+  dependent modules 2.76 KiB [dependent] 3 modules
+  ./example.js 205 bytes [built] [code generated]
+    [used exports unknown]
+    entry ./example.js main
+webpack 5.11.1 compiled successfully
+```
 
- <id>    <size>  <filename>
-       <reason> from <filename>
-output.js
-    0       320  .\example.js
-       main
-    1       502  (webpack)\buildin\__webpack_console.js
-       require (3x) from .\example.js
-    2        36  (webpack)\~\json-loader!.\test.json
-       require (1x) from .\example.js
-       require (1x) from .\example.js
-    3       502  (webpack)\buildin\__webpack_amd_require.js
-       require (1x) from (webpack)\~\enhanced-require\lib\require.webpack.js
-    4       241  (webpack)\buildin\__webpack_module.js
-       require (1x) from .\example.js
-    5        24  (webpack)\buildin\__webpack_options_amd.loader.js!(webpack)\buildin\__webpack_options_amd.loader.js
-       require (1x) from (webpack)\buildin\__webpack_amd_require.js
-    6        41  .\loader.js!.\file.js
-       require (1x) from .\example.js
-    7       179  (webpack)\~\enhanced-require\lib\require.webpack.js
-       require (1x) from .\example.js
+## Production mode
+
+```
+asset output.js 1.17 KiB [emitted] [minimized] (name: main)
+chunk (runtime: main) output.js (main) 2.96 KiB [entry] [rendered]
+  > ./example.js main
+  dependent modules 2.76 KiB [dependent] 3 modules
+  ./example.js 205 bytes [built] [code generated]
+    [no exports used]
+    entry ./example.js main
+webpack 5.11.1 compiled successfully
 ```

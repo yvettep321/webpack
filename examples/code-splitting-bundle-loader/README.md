@@ -1,102 +1,35 @@
+This example combines Code Splitting and Loaders. Make sure you have read the documentation of the examples that show the feature alone.
+
+The bundle loader is used to create a wrapper module for `file.js` that loads this module on demand. The wrapper module returns a function that can be called to asynchronously receive the inner module.
+
 # example.js
 
-``` javascript
-require("bundle!./file.js")(function(fileJsExports) {
+```javascript
+require("bundle-loader!./file.js")(function(fileJsExports) {
 	console.log(fileJsExports);
 });
 ```
 
 # file.js
 
-``` javascript
+```javascript
 module.exports = "It works";
 ```
 
+# dist/output.js
 
-# js/output.js
-
-``` javascript
-/******/(function(document, undefined) {
-/******/	return function(modules) {
-/******/		var installedModules = {}, installedChunks = {0:1};
-/******/		function require(moduleId) {
-/******/			if(typeof moduleId !== "number") throw new Error("Cannot find module '"+moduleId+"'");
-/******/			if(installedModules[moduleId])
-/******/				return installedModules[moduleId].exports;
-/******/			var module = installedModules[moduleId] = {
-/******/				exports: {},
-/******/				id: moduleId,
-/******/				loaded: false
-/******/			};
-/******/			modules[moduleId](module, module.exports, require);
-/******/			module.loaded = true;
-/******/			return module.exports;
-/******/		}
-/******/		require.e = function(chunkId, callback) {
-/******/			if(installedChunks[chunkId] === 1) return callback(require);
-/******/			if(installedChunks[chunkId] !== undefined)
-/******/				installedChunks[chunkId].push(callback);
-/******/			else {
-/******/				installedChunks[chunkId] = [callback];
-/******/				var head = document.getElementsByTagName('head')[0];
-/******/				var script = document.createElement('script');
-/******/				script.type = 'text/javascript';
-/******/				script.charset = 'utf-8';
-/******/				script.src = modules.c+chunkId+modules.a;
-/******/				head.appendChild(script);
-/******/			}
-/******/		};
-/******/		require.modules = modules;
-/******/		require.cache = installedModules;
-/******/		window[modules.b] = function(chunkId, moreModules) {
-/******/			for(var moduleId in moreModules)
-/******/				modules[moduleId] = moreModules[moduleId];
-/******/			var callbacks = installedChunks[chunkId];
-/******/			installedChunks[chunkId] = 1;
-/******/			for(var i = 0; i < callbacks.length; i++)
-/******/				callbacks[i](require);
-/******/		};
-/******/		return require(0);
-/******/	}
-/******/})(document)
-/******/({a:".output.js",b:"webpackJsonp",c:"",
-/******/0: function(module, exports, require) {
-
-/**! .\example.js !**/
-
-/******/ /* WEBPACK FREE VAR INJECTION */ (function(console) {
-require(/*! bundle!./file.js */2)(function(fileJsExports) {
-	console.log(fileJsExports);
-});
-/******/ /* WEBPACK FREE VAR INJECTION */ }(require(/*! __webpack_console */1)))
-
-/******/},
-/******/
-/******/1: function(module, exports, require) {
-
-/**! (webpack)\buildin\__webpack_console.js !**/
-
-var console = (function() { return this["console"] || (this["window"] && this["window"].console) || {} }());
-module.exports = console;
-for(var name in {log:1, info:1, error:1, warn:1, dir:1, trace:1, assert:1})
-	if(!console[name])
-		console[name] = function() {};
-var times = {};
-if(!console.time)
-console.time = function(label) {
-	times[label] = Date.now();
-};
-if(!console.timeEnd)
-console.timeEnd = function() {
-	var duration = Date.now() - times[label];
-	console.log('%s: %dms', label, duration);
-};
-
-/******/},
-/******/
-/******/2: function(module, exports, require) {
-
-/**! (webpack)\~\bundle-loader!.\file.js !**/
+```javascript
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ([
+/* 0 */,
+/* 1 */
+/*!***********************************************************!*\
+  !*** ../../node_modules/bundle-loader/index.js!./file.js ***!
+  \***********************************************************/
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements: module, __webpack_require__, __webpack_require__.e, __webpack_require__.* */
+/*! CommonJS bailout: module.exports is used directly at 3:0-14 */
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var cbs = [], 
 	data;
@@ -104,87 +37,307 @@ module.exports = function(cb) {
 	if(cbs) cbs.push(cb);
 	else cb(data);
 }
-require.e(1, function(require) {
-	data = require(/*! !.\file.js */3);
+__webpack_require__.e(/*! require.ensure */ 929).then((function(require) {
+	data = __webpack_require__(/*! !!./file.js */ 2);
 	var callbacks = cbs;
 	cbs = null;
 	for(var i = 0, l = callbacks.length; i < l; i++) {
 		callbacks[i](data);
 	}
-});
+}).bind(null, __webpack_require__)).catch(__webpack_require__.oe);
 
-/******/}
-/******/})
+/***/ })
+/******/ 	]);
 ```
 
-# js/1.output.js
+<details><summary><code>/* webpack runtime code */</code></summary>
 
-``` javascript
-/******/webpackJsonp(1,{
-/******/3: function(module, exports, require) {
+``` js
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = __webpack_modules__;
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/ensure chunk */
+/******/ 	(() => {
+/******/ 		__webpack_require__.f = {};
+/******/ 		// This file contains only the entry chunk.
+/******/ 		// The chunk loading function for additional chunks
+/******/ 		__webpack_require__.e = (chunkId) => {
+/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce((promises, key) => {
+/******/ 				__webpack_require__.f[key](chunkId, promises);
+/******/ 				return promises;
+/******/ 			}, []));
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get javascript chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference async chunks
+/******/ 		__webpack_require__.u = (chunkId) => {
+/******/ 			// return url for filenames based on template
+/******/ 			return "" + chunkId + ".output.js";
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop)
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/load script */
+/******/ 	(() => {
+/******/ 		var inProgress = {};
+/******/ 		// data-webpack is not used as build has no uniqueName
+/******/ 		// loadScript function to load a script via script tag
+/******/ 		__webpack_require__.l = (url, done, key) => {
+/******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
+/******/ 			var script, needAttach;
+/******/ 			if(key !== undefined) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				for(var i = 0; i < scripts.length; i++) {
+/******/ 					var s = scripts[i];
+/******/ 					if(s.getAttribute("src") == url) { script = s; break; }
+/******/ 				}
+/******/ 			}
+/******/ 			if(!script) {
+/******/ 				needAttach = true;
+/******/ 				script = document.createElement('script');
+/******/ 		
+/******/ 				script.charset = 'utf-8';
+/******/ 				script.timeout = 120;
+/******/ 				if (__webpack_require__.nc) {
+/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
+/******/ 				}
+/******/ 		
+/******/ 				script.src = url;
+/******/ 			}
+/******/ 			inProgress[url] = [done];
+/******/ 			var onScriptComplete = (prev, event) => {
+/******/ 				// avoid mem leaks in IE.
+/******/ 				script.onerror = script.onload = null;
+/******/ 				clearTimeout(timeout);
+/******/ 				var doneFns = inProgress[url];
+/******/ 				delete inProgress[url];
+/******/ 				script.parentNode && script.parentNode.removeChild(script);
+/******/ 				doneFns && doneFns.forEach((fn) => fn(event));
+/******/ 				if(prev) return prev(event);
+/******/ 			}
+/******/ 			;
+/******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
+/******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
+/******/ 			script.onload = onScriptComplete.bind(null, script.onload);
+/******/ 			needAttach && document.head.appendChild(script);
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/publicPath */
+/******/ 	(() => {
+/******/ 		__webpack_require__.p = "dist/";
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/jsonp chunk loading */
+/******/ 	(() => {
+/******/ 		// no baseURI
+/******/ 		
+/******/ 		// object to store loaded and loading chunks
+/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 		// Promise = chunk loading, 0 = chunk loaded
+/******/ 		var installedChunks = {
+/******/ 			179: 0
+/******/ 		};
+/******/ 		
+/******/ 		
+/******/ 		__webpack_require__.f.j = (chunkId, promises) => {
+/******/ 				// JSONP chunk loading for javascript
+/******/ 				var installedChunkData = __webpack_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
+/******/ 				if(installedChunkData !== 0) { // 0 means "already installed".
+/******/ 		
+/******/ 					// a Promise means "currently loading".
+/******/ 					if(installedChunkData) {
+/******/ 						promises.push(installedChunkData[2]);
+/******/ 					} else {
+/******/ 						if(true) { // all chunks have JS
+/******/ 							// setup Promise in chunk cache
+/******/ 							var promise = new Promise((resolve, reject) => {
+/******/ 								installedChunkData = installedChunks[chunkId] = [resolve, reject];
+/******/ 							});
+/******/ 							promises.push(installedChunkData[2] = promise);
+/******/ 		
+/******/ 							// start chunk loading
+/******/ 							var url = __webpack_require__.p + __webpack_require__.u(chunkId);
+/******/ 							// create error before stack unwound to get useful stacktrace later
+/******/ 							var error = new Error();
+/******/ 							var loadingEnded = (event) => {
+/******/ 								if(__webpack_require__.o(installedChunks, chunkId)) {
+/******/ 									installedChunkData = installedChunks[chunkId];
+/******/ 									if(installedChunkData !== 0) installedChunks[chunkId] = undefined;
+/******/ 									if(installedChunkData) {
+/******/ 										var errorType = event && (event.type === 'load' ? 'missing' : event.type);
+/******/ 										var realSrc = event && event.target && event.target.src;
+/******/ 										error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
+/******/ 										error.name = 'ChunkLoadError';
+/******/ 										error.type = errorType;
+/******/ 										error.request = realSrc;
+/******/ 										installedChunkData[1](error);
+/******/ 									}
+/******/ 								}
+/******/ 							};
+/******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId);
+/******/ 						} else installedChunks[chunkId] = 0;
+/******/ 					}
+/******/ 				}
+/******/ 		};
+/******/ 		
+/******/ 		// no prefetching
+/******/ 		
+/******/ 		// no preloaded
+/******/ 		
+/******/ 		// no HMR
+/******/ 		
+/******/ 		// no HMR manifest
+/******/ 		
+/******/ 		// no deferred startup
+/******/ 		
+/******/ 		// install a JSONP callback for chunk loading
+/******/ 		var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
+/******/ 			var [chunkIds, moreModules, runtime] = data;
+/******/ 			// add "moreModules" to the modules object,
+/******/ 			// then flag all "chunkIds" as loaded and fire callback
+/******/ 			var moduleId, chunkId, i = 0, resolves = [];
+/******/ 			for(;i < chunkIds.length; i++) {
+/******/ 				chunkId = chunkIds[i];
+/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 					resolves.push(installedChunks[chunkId][0]);
+/******/ 				}
+/******/ 				installedChunks[chunkId] = 0;
+/******/ 			}
+/******/ 			for(moduleId in moreModules) {
+/******/ 				if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 					__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 				}
+/******/ 			}
+/******/ 			if(runtime) runtime(__webpack_require__);
+/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
+/******/ 			while(resolves.length) {
+/******/ 				resolves.shift()();
+/******/ 			}
+/******/ 		
+/******/ 		}
+/******/ 		
+/******/ 		var chunkLoadingGlobal = self["webpackChunk"] = self["webpackChunk"] || [];
+/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
+/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/ 		
+/******/ 		// no deferred startup
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+```
 
-/**! .\file.js !**/
+</details>
+
+``` js
+(() => {
+/*!********************!*\
+  !*** ./example.js ***!
+  \********************/
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements: __webpack_require__ */
+__webpack_require__(/*! bundle-loader!./file.js */ 1)(function(fileJsExports) {
+	console.log(fileJsExports);
+});
+
+})();
+
+/******/ })()
+;
+```
+
+# dist/929.output.js
+
+```javascript
+(self["webpackChunk"] = self["webpackChunk"] || []).push([[929],{
+
+/***/ 2:
+/*!*****************!*\
+  !*** ./file.js ***!
+  \*****************/
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 1:0-14 */
+/***/ ((module) => {
 
 module.exports = "It works";
 
-/******/}
-/******/})
+/***/ })
+
+}]);
 ```
 
 # Info
 
-## Uncompressed
+## Unoptimized
 
 ```
-Hash: 578af2d2eeef37e82cc9e8248511201d
-Compile Time: 53ms
-Chunks: 2
-Modules: 4
-Modules including duplicates: 4
-Modules first chunk: 3
-main     output.js:     3303 chars/bytes
-       1.output.js:      145 chars/bytes
-
- <id>    <size>  <filename>
-       <reason> from <filename>
-output.js
-    0        92  .\example.js
-       main
-    1       502  (webpack)\buildin\__webpack_console.js
-       require (1x) from .\example.js
-    2       398  (webpack)\~\bundle-loader!.\file.js
-       require (1x) from .\example.js
-1.output.js
-    3        28  .\file.js
-       async require (1x) from .\file.js
+asset output.js 9.58 KiB [emitted] (name: main)
+asset 929.output.js 354 bytes [emitted]
+chunk (runtime: main) output.js (main) 375 bytes (javascript) 4.97 KiB (runtime) [entry] [rendered]
+  > ./example.js main
+  runtime modules 4.97 KiB 6 modules
+  dependent modules 281 bytes [dependent] 1 module
+  ./example.js 94 bytes [built] [code generated]
+    [used exports unknown]
+    entry ./example.js main
+chunk (runtime: main) 929.output.js 28 bytes [rendered]
+  > ../../node_modules/bundle-loader/index.js!./file.js 7:0-14:2
+  ./file.js 28 bytes [built] [code generated]
+    [used exports unknown]
+    cjs self exports reference ./file.js 1:0-14
+    cjs require !!./file.js ../../node_modules/bundle-loader/index.js!./file.js 8:8-30
+webpack 5.11.1 compiled successfully
 ```
 
-## Minimized (uglify-js, no zip)
+## Production mode
 
 ```
-Hash: 5e7ee4f471c7ea9d20a78d163e3645da
-Compile Time: 254ms
-Chunks: 2
-Modules: 4
-Modules including duplicates: 4
-Modules first chunk: 3
-main     output.js:     1221 chars/bytes
-       1.output.js:       54 chars/bytes
-
- <id>    <size>  <filename>
-       <reason> from <filename>
-output.js
-    0        40  .\example.js
-       main
-    1       403  (webpack)\buildin\__webpack_console.js
-       require (1x) from .\example.js
-    2       165  (webpack)\~\bundle-loader!.\file.js
-       require (1x) from .\example.js
-1.output.js
-    3        26  .\file.js
-       async require (1x) from .\file.js
+asset output.js 1.84 KiB [emitted] [minimized] (name: main)
+asset 929.output.js 88 bytes [emitted] [minimized]
+chunk (runtime: main) output.js (main) 375 bytes (javascript) 4.97 KiB (runtime) [entry] [rendered]
+  > ./example.js main
+  runtime modules 4.97 KiB 6 modules
+  dependent modules 281 bytes [dependent] 1 module
+  ./example.js 94 bytes [built] [code generated]
+    [no exports used]
+    entry ./example.js main
+chunk (runtime: main) 929.output.js 28 bytes [rendered]
+  > ../../node_modules/bundle-loader/index.js!./file.js 7:0-14:2
+  ./file.js 28 bytes [built] [code generated]
+    [used exports unknown]
+    cjs self exports reference ./file.js 1:0-14
+    cjs require !!./file.js ../../node_modules/bundle-loader/index.js!./file.js 8:8-30
+webpack 5.11.1 compiled successfully
 ```
-
-## Graph
-
-![webpack-graph](http://webpack.github.com/webpack/examples/code-splitting-bundle-loader/graph.svg)

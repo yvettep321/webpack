@@ -1,42 +1,47 @@
+This example shows how you can mix different module styles in webpack. Here CommonJS, AMD and Harmony Modules (ES6 Modules) are used. In addition to that there are different types of dynamic requires (`"../require.context/templates/"+amd1+".js"` and `Math.random() < 0.5 ? "./commonjs" : "./amd"`).
+
+You see that everything is working nicely together.
+
 # example.js
 
-``` javascript
-{{example.js}}
+```javascript
+_{{example.js}}_
 ```
 
 # amd.js
 
-``` javascript
-{{amd.js}}
+```javascript
+_{{amd.js}}_
 ```
 
 # commonjs.js
 
-``` javascript
-{{commonjs.js}}
+```javascript
+_{{commonjs.js}}_
 ```
 
+# dist/output.js
 
-# js/output.js
-
-``` javascript
-{{js/output.js}}
+```javascript
+_{{dist/output.js}}_
 ```
 
-# js/1.output.js
+# dist/635.output.js
 
-``` javascript
-{{js/1.output.js}}
+```javascript
+_{{dist/635.output.js}}_
 ```
 
 # Info
 
-## Uncompressed
+## Unoptimized
 
 ```
-{{stdout}}
+_{{stdout}}_
 ```
 
-## Graph
+## Production mode
 
-![webpack-graph](http://webpack.github.com/webpack/examples/mixed/graph.svg)
+```
+_{{production:stdout}}_
+```
